@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/webui.js"></script>
+    <title>AlienS - Code Learning App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .app-container {
+            width: 95vw;
+            height: 95vh;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            margin: auto;
+        }
+
+        /* ========== КНОПКИ ========== */
+        .btn {
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: clamp(16px, 2.5vh, 28px);
+            padding: clamp(8px, 1.5vh, 16px) clamp(16px, 3vw, 30px);
+        }
+
+        .btn--primary {
+            background: #667eea;
+            color: white;
+            border-radius: 10px;
+        }
+
+            .btn--primary:hover {
+                background: #764ba2;
+            }
+
+        .btn--logout {
+            background: #dc3545;
+            color: white;
+        }
+
+            .btn--logout:hover {
+                background: #c82333;
+            }
+
+        /* ========== ОСНОВНОЙ КОНТЕЙНЕР ========== */
+        .scrollable-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: clamp(10px, 2vh, 30px) clamp(15px, 3vw, 30px);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        /* ========== ГЛАВНЫЙ ЭКРАН ========== */
+        .main-menu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
+            gap: clamp(10px, 2vh, 20px);
+            padding: clamp(10px, 2vh, 20px) 0;
+        }
+
+            .main-menu .btn {
+                width: min(80%, 600px);
+                padding: clamp(15px, 3vh, 25px) clamp(20px, 4vw, 40px);
+                font-size: clamp(20px, 3.5vh, 28px);
+                background: white;
+                color: #667eea;
+                border: 3px solid #667eea;
+                border-radius: 20px;
+                white-space: nowrap;
+            }
+
+                .main-menu .btn:hover {
+                    background: #667eea;
+                    color: white;
+                }
+
+            .main-menu .btn--logout {
+                background: #dc3545;
+                color: white;
+                border-color: #dc3545;
+            }
+
+                .main-menu .btn--logout:hover {
+                    background: #c82333;
+                    border-color: #c82333;
+                }
+
+        .welcome-message {
+            text-align: center;
+            padding: clamp(20px, 4vh, 40px) clamp(20px, 4vw, 40px);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 30px;
+            margin: 0;
+            width: min(90%, 700px);
+        }
+
+            .welcome-message h1 {
+                color: #333;
+                font-size: clamp(24px, 4vh, 36px);
+                margin-bottom: clamp(10px, 2vh, 15px);
+            }
+
+            .welcome-message p {
+                color: #666;
+                font-size: clamp(14px, 2.5vh, 18px);
+            }
+
+        /* ========== АДАПТАЦИЯ ДЛЯ НИЗКИХ ЭКРАНОВ ========== */
+        @media (max-height: 600px) {
+            .scrollable-content {
+                align-items: center;
+            }
+
+            .main-menu {
+                gap: 8px;
+            }
+
+            .welcome-message {
+                padding: 15px;
+            }
+
+                .welcome-message h1 {
+                    margin-bottom: 5px;
+                }
+
+            .main-menu .btn {
+                padding: 10px 20px;
+            }
+        }
+
+        /* ========== АДАПТАЦИЯ ДЛЯ УЗКИХ ЭКРАНОВ ========== */
+        @media (max-width: 500px) {
+            .main-menu .btn {
+                width: 95%;
+                font-size: 18px;
+                white-space: normal;
+            }
+
+            .welcome-message {
+                width: 95%;
+            }
+        }
+
+        /* ========== АДАПТАЦИЯ ДЛЯ ЭКРАНОВ 2K (2560x1440) ========== */
+        @media (min-width: 2000px) and (min-height: 1000px) {
+            .main-menu {
+                max-width: 1200px;
+                gap: 30px;
+            }
+
+                .main-menu .btn {
+                    width: 900px;
+                    padding: 35px 60px;
+                    font-size: 42px;
+                    border-width: 5px;
+                    border-radius: 30px;
+                    gap: 15px;
+                }
+
+            .welcome-message {
+                width: 1050px;
+                padding: 60px 60px;
+                border-radius: 45px;
+            }
+
+                .welcome-message h1 {
+                    font-size: 54px;
+                    margin-bottom: 25px;
+                }
+
+                .welcome-message p {
+                    font-size: 28px;
+                }
+        }
+
+        /* ========== АДАПТАЦИЯ ДЛЯ ЭКРАНОВ 4K (3840x2160) ========== */
+        @media (min-width: 3000px) and (min-height: 1500px) {
+            .main-menu {
+                max-width: 1800px;
+                gap: 45px;
+            }
+
+                .main-menu .btn {
+                    width: 1350px;
+                    padding: 55px 90px;
+                    font-size: 64px;
+                    border-width: 8px;
+                    border-radius: 45px;
+                    gap: 25px;
+                }
+
+            .welcome-message {
+                width: 1600px;
+                padding: 90px 90px;
+                border-radius: 70px;
+            }
+
+                .welcome-message h1 {
+                    font-size: 80px;
+                    margin-bottom: 40px;
+                }
+
+                .welcome-message p {
+                    font-size: 42px;
+                }
+        }
+
+        /* ========== АДАПТАЦИЯ ДЛЯ ЭКРАНОВ 5K (5120x2880) ========== */
+        @media (min-width: 4500px) and (min-height: 2000px) {
+            .main-menu {
+                max-width: 2400px;
+                gap: 60px;
+            }
+
+                .main-menu .btn {
+                    width: 1800px;
+                    padding: 75px 120px;
+                    font-size: 86px;
+                    border-width: 10px;
+                    border-radius: 60px;
+                    gap: 35px;
+                }
+
+            .welcome-message {
+                width: 2100px;
+                padding: 120px 120px;
+                border-radius: 90px;
+            }
+
+                .welcome-message h1 {
+                    font-size: 110px;
+                    margin-bottom: 55px;
+                }
+
+                .welcome-message p {
+                    font-size: 58px;
+                }
+        }
+
+        /* ========== АДАПТАЦИЯ ДЛЯ ЭКРАНОВ 8K (7680x4320) ========== */
+        @media (min-width: 7000px) and (min-height: 3500px) {
+            .main-menu {
+                max-width: 3600px;
+                gap: 90px;
+            }
+
+                .main-menu .btn {
+                    width: 2700px;
+                    padding: 110px 180px;
+                    font-size: 130px;
+                    border-width: 15px;
+                    border-radius: 90px;
+                    gap: 50px;
+                }
+
+            .welcome-message {
+                width: 3200px;
+                padding: 180px 180px;
+                border-radius: 140px;
+            }
+
+                .welcome-message h1 {
+                    font-size: 170px;
+                    margin-bottom: 85px;
+                }
+
+                .welcome-message p {
+                    font-size: 90px;
+                }
+        }
+
+        /* ========== УНИВЕРСАЛЬНАЯ АДАПТАЦИЯ ДЛЯ ОЧЕНЬ БОЛЬШИХ ЭКРАНОВ ========== */
+        @media (min-width: 10000px) {
+            .main-menu {
+                max-width: 5000px;
+                gap: 150px;
+            }
+
+                .main-menu .btn {
+                    width: 4000px;
+                    padding: 200px 300px;
+                    font-size: 200px;
+                    border-width: 20px;
+                    border-radius: 150px;
+                    gap: 80px;
+                }
+
+            .welcome-message {
+                width: 4800px;
+                padding: 300px 300px;
+                border-radius: 200px;
+            }
+
+                .welcome-message h1 {
+                    font-size: 280px;
+                    margin-bottom: 120px;
+                }
+
+                .welcome-message p {
+                    font-size: 150px;
+                }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Основной контент -->
+        <div class="scrollable-content" id="scrollableContent">
+            <!-- Главный экран -->
+            <div id="mainScreen" class="screen active">
+                <div class="main-menu">
+                    <div class="welcome-message">
+                        <h1>Добро пожаловать в AlienS!</h1>
+                        <p>Интерактивная платформа для изучения программирования</p>
+                    </div>
+                    <button class="btn" onclick="webui.call('open_course')">📚 Открыть курс</button>
+                    <button class="btn" onclick="webui.call('create_course')">✏️ Создать курс</button>
+                    <button class="btn" onclick="webui.call('show_account')">👤 Аккаунт</button>
+                    <button class="btn" onclick="webui.call('show_settings')">⚙️ Настройки</button>
+                    <button class="btn btn--logout" onclick="webui.call('exit_app')">🚪 Выйти</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                console.log('Escape pressed');
+            }
+        });
+    </script>
+
+</body>
+</html>

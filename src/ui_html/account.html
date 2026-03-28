@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/webui.js"></script>
+    <title>AlienS - Аккаунт</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .app-container {
+            width: 95vw;
+            height: 95vh;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            margin: auto;
+        }
+
+        /* ========== КНОПКИ ========== */
+        .btn {
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 16px;
+            padding: 8px 16px;
+            border-radius: 10px;
+        }
+
+        .btn--primary {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+        }
+
+            .btn--primary:hover {
+                background: #764ba2;
+            }
+
+        .btn--secondary {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 12px 30px;
+        }
+
+            .btn--secondary:hover {
+                background: rgba(102, 126, 234, 0.1);
+            }
+
+        /* ========== ВЕРХНЯЯ ПАНЕЛЬ ========== */
+        .top-bar {
+            padding: 20px 30px;
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            .top-bar h1 {
+                color: #333;
+                font-size: 24px;
+                margin: 0;
+            }
+
+            .top-bar .btn {
+                background: white;
+                border: 2px solid #667eea;
+                color: #667eea;
+                border-radius: 25px;
+                padding: 10px 20px;
+            }
+
+                .top-bar .btn:hover {
+                    background: #667eea;
+                    color: white;
+                }
+
+        /* ========== ОСНОВНОЙ КОНТЕЙНЕР ========== */
+        .scrollable-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        /* ========== КОНТЕНТ АККАУНТА ========== */
+        .account-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .account-fields {
+            margin: 30px 0;
+        }
+
+        .field-group {
+            margin-bottom: 25px;
+        }
+
+        .field-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .field-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .field {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+            .field:focus {
+                outline: none;
+                border-color: #667eea;
+            }
+
+            .field.valid {
+                border-color: #28a745;
+            }
+
+            .field.invalid {
+                border-color: #dc3545;
+            }
+
+        .validation-indicator {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+            .validation-indicator.valid {
+                background: #28a745;
+                color: white;
+            }
+
+            .validation-indicator.invalid {
+                background: #dc3545;
+                color: white;
+            }
+
+            .validation-indicator:empty {
+                display: none;
+            }
+
+        .field-hint {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+            min-height: 20px;
+        }
+
+            .field-hint.error {
+                color: #dc3545;
+            }
+
+        /* ========== КНОПКИ ДЕЙСТВИЙ ========== */
+        .account-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid rgba(102, 126, 234, 0.3);
+        }
+
+            .account-actions .btn {
+                min-width: 120px;
+            }
+
+        /* ========== СТАТУС СОХРАНЕНИЯ ========== */
+        .save-status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+            .save-status.show {
+                opacity: 1;
+            }
+
+            .save-status.success {
+                background: rgba(40, 167, 69, 0.2);
+                color: #28a745;
+            }
+
+            .save-status.error {
+                background: rgba(220, 53, 69, 0.2);
+                color: #dc3545;
+            }
+
+        @media (max-width: 768px) {
+            .account-container {
+                padding: 20px;
+            }
+
+            .field-wrapper {
+                flex-wrap: wrap;
+            }
+
+            .validation-indicator {
+                margin-left: auto;
+            }
+
+            .account-actions {
+                flex-direction: column;
+            }
+
+                .account-actions .btn {
+                    width: 100%;
+                }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Верхняя панель -->
+        <div class="top-bar">
+            <h1>👤 Аккаунт</h1>
+            <button class="btn" onclick="goToMainMenu()">🏠 Главное меню</button>
+        </div>
+
+        <!-- Основной контент -->
+        <div class="scrollable-content">
+            <div class="account-container">
+                <!-- Динамические поля аккаунта будут вставлены сюда -->
+                <div id="accountFields" class="account-fields">
+                    <div class="field-group">
+                        <div class="field-label">Загрузка данных...</div>
+                    </div>
+                </div>
+
+                <!-- Кнопки действий -->
+                <div class="account-actions">
+                    <button class="btn btn--secondary" onclick="cancelChanges()">Отменить</button>
+                    <button class="btn btn--primary" onclick="saveChanges()" id="saveButton">Сохранить</button>
+                </div>
+
+                <!-- Статус сохранения -->
+                <div id="saveStatus" class="save-status"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Хранение текущих значений полей
+        let currentValues = {};
+        let originalValues = {};
+        let validationState = {};
+        let fields = [];
+
+        // Функция инициализации, вызываемая из C++ при загрузке страницы
+        function initializeAccount(fieldsData) {
+            try {
+                fields = JSON.parse(fieldsData);
+
+                // Инициализируем значения
+                fields.forEach(field => {
+                    currentValues[field.name] = field.value || '';
+                    originalValues[field.name] = field.value || '';
+                    validationState[field.name] = {
+                        isValid: true,
+                        message: ''
+                    };
+                });
+
+                renderFields();
+                updateSaveButtonState();
+            } catch (e) {
+                console.error('Error initializing account:', e);
+                showStatus('Ошибка загрузки данных', 'error');
+            }
+        }
+
+        // Отрисовка полей
+        function renderFields() {
+            const container = document.getElementById('accountFields');
+
+            if (!fields || fields.length === 0) {
+                container.innerHTML = `
+                    <div class="field-group">
+                        <div class="field-label">Нет данных для отображения</div>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            fields.forEach(field => {
+                const value = currentValues[field.name] || '';
+                const isValid = validationState[field.name]?.isValid !== false;
+                const validationMessage = validationState[field.name]?.message || '';
+                const fieldClass = `field ${!isValid ? 'invalid' : (value ? 'valid' : '')}`;
+                const indicatorClass = `validation-indicator ${isValid ? 'valid' : 'invalid'}`;
+                const indicatorSymbol = isValid ? '✓' : '!';
+
+                html += `
+                    <div class="field-group" data-field="${field.name}">
+                        <label class="field-label">${field.label || field.name}</label>
+                        <div class="field-wrapper">
+                            <input
+                                type="${field.type || 'text'}"
+                                class="${fieldClass}"
+                                value="${escapeHtml(value)}"
+                                placeholder="${field.placeholder || ''}"
+                                oninput="validateField('${field.name}', this.value)"
+                                data-field-name="${field.name}"
+                            >
+                            <div class="${indicatorClass}">${value ? indicatorSymbol : ''}</div>
+                        </div>
+                        <div class="field-hint ${!isValid ? 'error' : ''}">${validationMessage || field.hint || ''}</div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Валидация поля
+        function validateField(fieldName, value) {
+            currentValues[fieldName] = value;
+
+            // Вызываем C++ функцию для валидации
+            webui.call('validate_field', JSON.stringify({
+                name: fieldName,
+                value: value
+            }));
+        }
+
+        // Функция, вызываемая из C++ для обновления статуса валидации
+        function updateValidationStatus(result) {
+            try {
+                const data = JSON.parse(result);
+                validationState[data.name] = {
+                    isValid: data.isValid,
+                    message: data.message || ''
+                };
+
+                // Обновляем отображение поля
+                const fieldGroup = document.querySelector(`[data-field="${data.name}"]`);
+                if (fieldGroup) {
+                    const input = fieldGroup.querySelector('.field');
+                    const indicator = fieldGroup.querySelector('.validation-indicator');
+                    const hint = fieldGroup.querySelector('.field-hint');
+                    const value = currentValues[data.name];
+
+                    if (input) {
+                        input.classList.remove('valid', 'invalid');
+                        if (value) {
+                            input.classList.add(data.isValid ? 'valid' : 'invalid');
+                        }
+                    }
+
+                    if (indicator) {
+                        indicator.className = `validation-indicator ${data.isValid ? 'valid' : 'invalid'}`;
+                        indicator.textContent = value ? (data.isValid ? '✓' : '!') : '';
+                    }
+
+                    if (hint) {
+                        hint.className = `field-hint ${!data.isValid ? 'error' : ''}`;
+                        hint.textContent = data.message || hint.dataset.originalHint || '';
+                    }
+                }
+
+                updateSaveButtonState();
+            } catch (e) {
+                console.error('Error updating validation:', e);
+            }
+        }
+
+        // Обновление состояния кнопки сохранения
+        function updateSaveButtonState() {
+            const saveButton = document.getElementById('saveButton');
+            const hasChanges = Object.keys(currentValues).some(
+                key => currentValues[key] !== originalValues[key]
+            );
+            const isValid = Object.values(validationState).every(v => v.isValid !== false);
+
+            saveButton.disabled = !hasChanges || !isValid;
+            saveButton.style.opacity = saveButton.disabled ? '0.5' : '1';
+            saveButton.style.cursor = saveButton.disabled ? 'not-allowed' : 'pointer';
+        }
+
+        // Сохранение изменений
+        function saveChanges() {
+            if (document.getElementById('saveButton').disabled) return;
+
+            showStatus('Сохранение...', '');
+
+            webui.call('save_account', JSON.stringify({
+                values: currentValues,
+                originalValues: originalValues
+            }));
+        }
+
+        // Функция, вызываемая из C++ после сохранения
+        function onSaveComplete(result) {
+            try {
+                const data = JSON.parse(result);
+
+                if (data.success) {
+                    // Обновляем оригинальные значения
+                    originalValues = { ...currentValues };
+
+                    // Показываем успешный статус
+                    showStatus('Данные успешно сохранены', 'success');
+
+                    // Обновляем состояние кнопки
+                    updateSaveButtonState();
+
+                    // Очищаем статус через 3 секунды
+                    setTimeout(() => {
+                        document.getElementById('saveStatus').classList.remove('show');
+                    }, 3000);
+                } else {
+                    showStatus(data.message || 'Ошибка при сохранении', 'error');
+                }
+            } catch (e) {
+                console.error('Error parsing save result:', e);
+                showStatus('Ошибка при сохранении', 'error');
+            }
+        }
+
+        // Отмена изменений
+        function cancelChanges() {
+            // Восстанавливаем оригинальные значения
+            currentValues = { ...originalValues };
+
+            // Сбрасываем состояние валидации
+            fields.forEach(field => {
+                validationState[field.name] = {
+                    isValid: true,
+                    message: ''
+                };
+            });
+
+            // Перерисовываем поля
+            renderFields();
+
+            // Обновляем состояние кнопки
+            updateSaveButtonState();
+
+            // Вызываем C++ функцию для уведомления об отмене
+            webui.call('cancel_changes');
+
+            showStatus('Изменения отменены', '');
+            setTimeout(() => {
+                document.getElementById('saveStatus').classList.remove('show');
+            }, 2000);
+        }
+
+        // Показ статуса
+        function showStatus(message, type) {
+            const status = document.getElementById('saveStatus');
+            status.textContent = message;
+            status.className = `save-status show ${type}`;
+        }
+
+        // Возврат в главное меню
+        function goToMainMenu() {
+            if (hasUnsavedChanges()) {
+                if (confirm('У вас есть несохраненные изменения. Вы действительно хотите выйти?')) {
+                    webui.call('go_to_main_menu');
+                }
+            } else {
+                webui.call('go_to_main_menu');
+            }
+        }
+
+        // Проверка наличия несохраненных изменений
+        function hasUnsavedChanges() {
+            return Object.keys(currentValues).some(
+                key => currentValues[key] !== originalValues[key]
+            );
+        }
+
+        // Экранирование HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Обработчик закрытия страницы
+        window.addEventListener('beforeunload', function (e) {
+            if (hasUnsavedChanges()) {
+                e.preventDefault();
+                e.returnValue = 'У вас есть несохраненные изменения. Вы действительно хотите покинуть страницу?';
+            }
+        });
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Запрашиваем данные аккаунта при загрузке
+            webui.call('load_account_data');
+        });
+    </script>
+</body>
+</html>

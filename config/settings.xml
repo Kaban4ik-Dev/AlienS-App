@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<settings>
+	<setting_namespace>base</setting_namespace>
+	
+	<setting name="Example 1" type="bool">
+		<value>false</value>
+	</setting>
+	
+	<setting name="Example 2" type="int">
+		<value>10</value>
+		<min_value>-100</min_value>
+		<max_value>100</max_value>
+	</setting>
+
+	<setting name="Example 3" type="int">
+		<value>0</value>
+		<acceptable_value>-100</acceptable_value>
+		<acceptable_value>-50</acceptable_value>
+		<acceptable_value>0</acceptable_value>
+		<acceptable_value>50</acceptable_value>
+		<acceptable_value>100</acceptable_value>
+	</setting>
+
+	<setting name="Example 4" type="float">
+		<value>5.792</value>
+		<min_value>-7.53</min_value>
+		<max_value>18.314</max_value>
+	</setting>
+
+	<setting name="Example 5" type="float">
+		<value>0.721</value>
+		<acceptable_value>-17.52</acceptable_value>
+		<acceptable_value>-3.61</acceptable_value>
+		<acceptable_value>-0.001</acceptable_value>
+		<acceptable_value>0.001</acceptable_value>
+		<acceptable_value>2.71</acceptable_value>
+	</setting>
+
+	<setting name="Example 6" type="string">
+		<value>choise 1</value>
+		<acceptable_value>choise 1</acceptable_value>
+		<acceptable_value>choise 2</acceptable_value>
+		<acceptable_value>choise 3</acceptable_value>
+	</setting>
+</settings>

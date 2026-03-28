@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<settings>
+	<app_params>
+		<first_launch>true</first_launch>
+		
+		<skip_settings_load_errors>true</skip_settings_load_errors>
+		<skip_module_load_errors>true</skip_module_load_errors>
+		<skip_course_load_errors>true</skip_course_load_errors>
+		
+		<enable_debug_output>true</enable_debug_output>
+	</app_params>
+</settings>

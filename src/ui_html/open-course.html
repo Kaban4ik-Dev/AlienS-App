@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/webui.js"></script>
+    <title>AlienS - Просмотр курсов</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .app-container {
+            width: 95vw;
+            height: 95vh;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            margin: auto;
+        }
+
+        /* ========== КНОПКИ ========== */
+        .btn {
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 16px;
+            padding: 8px 16px;
+        }
+
+        .btn--primary {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 10px;
+        }
+
+        .btn--primary:hover {
+            background: #764ba2;
+        }
+
+        /* ========== ВЕРХНЯЯ ПАНЕЛЬ ========== */
+        .top-bar {
+            padding: 20px 30px;
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .top-bar .btn {
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 25px;
+            padding: 10px 20px;
+        }
+
+        .top-bar .btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* ========== ОСНОВНОЙ КОНТЕЙНЕР ========== */
+        .main-content {
+            flex: 1;
+            display: flex;
+            gap: 20px;
+            padding: 20px 30px;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        /* ========== ЛЕВАЯ КОЛОНКА ========== */
+        .left-column {
+            width: 350px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow: hidden;
+        }
+
+        .courses-container {
+            background: white;
+            border-radius: 15px;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .courses-header {
+            padding: 15px 20px;
+            background: rgba(102, 126, 234, 0.1);
+            border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .courses-header h3 {
+            color: #333;
+            font-size: 18px;
+        }
+
+        .courses-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .course-item {
+            margin-bottom: 20px;
+        }
+
+        .course-title {
+            padding: 12px 15px;
+            background: #667eea;
+            color: white;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: default;
+            margin-bottom: 5px;
+        }
+
+        .topics-list {
+            margin-left: 20px;
+        }
+
+        .topic-item {
+            padding: 10px 15px;
+            margin: 5px 0;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .topic-item:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateX(5px);
+        }
+
+        .topic-item.active {
+            background: #667eea;
+            color: white;
+        }
+
+        /* ========== ПРАВАЯ КОЛОНКА ========== */
+        .right-column {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            min-width: 0;
+        }
+
+        .content-header {
+            padding: 15px 25px;
+            background: rgba(102, 126, 234, 0.1);
+            border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .content-header h2 {
+            color: #333;
+            font-size: 20px;
+        }
+
+        .content-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+        }
+
+        .empty-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            color: #999;
+            font-size: 18px;
+            text-align: center;
+            padding: 40px;
+        }
+
+        /* ========== БЛОКИ КОНТЕНТА ========== */
+        .content-block {
+            margin-bottom: 30px;
+        }
+
+        .text-block {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            position: relative;
+            margin: 15px 0;
+        }
+
+        .code-block pre {
+            margin: 0;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .image-block {
+            text-align: center;
+        }
+
+        .image-block img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-caption {
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .test-block {
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .test-question {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .test-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .test-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .test-option:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .test-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .test-option label {
+            flex: 1;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .test-option.selected {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .test-feedback {
+            margin-top: 15px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .test-feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .test-feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .submit-test {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 15px;
+            transition: background 0.3s ease;
+        }
+
+        .submit-test:hover {
+            background: #764ba2;
+        }
+
+        .submit-test:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .left-column {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Верхняя панель -->
+        <div class="top-bar">
+            <div class="top-bar-left">
+                <button class="btn" onclick="goToMainMenu()">🏠 Главное меню</button>
+            </div>
+            <div class="top-bar-right">
+                <button class="btn" onclick="openCodeExecutor()">💻 Исполнитель кода</button>
+            </div>
+        </div>
+
+        <!-- Основной контент с двумя колонками -->
+        <div class="main-content">
+            <!-- Левая колонка - список курсов и тем -->
+            <div class="left-column">
+                <div class="courses-container">
+                    <div class="courses-header">
+                        <h3>📚 Курсы и темы</h3>
+                    </div>
+                    <div class="courses-scroll" id="coursesList">
+                        <!-- Здесь будут отображаться курсы и темы -->
+                        <div style="text-align: center; color: #999; padding: 20px;">
+                            Загрузка курсов...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Правая колонка - содержимое темы -->
+            <div class="right-column">
+                <div class="content-header">
+                    <h2 id="topicTitle">Содержание темы</h2>
+                </div>
+                <div class="content-scroll" id="topicContent">
+                    <div class="empty-content">
+                        Выберите тему из списка слева<br>
+                        чтобы просмотреть её содержимое
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно исполнителя кода -->
+    <div class="modal-overlay" id="codeExecutorOverlay" onclick="if(event.target === this) closeCodeExecutor()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Исполнитель кода</h2>
+                <button class="btn btn--close" onclick="closeCodeExecutor()">×</button>
+            </div>
+            <textarea class="field field-code" id="codeInput" placeholder="Введите код...">print("Hello, World!")</textarea>
+            <button class="btn btn--primary" onclick="executeCode()">Выполнить</button>
+            <div class="field field-output" id="codeOutput">
+                Результат выполнения...
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Стили для модального окна */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn--close {
+            font-size: 24px;
+            padding: 0 10px;
+        }
+
+        .field {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .field-code {
+            font-family: 'Courier New', monospace;
+            min-height: 200px;
+        }
+
+        .field-output {
+            background: #f5f5f5;
+            min-height: 150px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+
+    <script>
+        // Текущее состояние
+        let currentTopicId = null;
+        let currentTestData = null;
+        let selectedAnswers = {};
+
+        // Функции для навигации
+        function goToMainMenu() {
+            webui.call('show_main_menu');
+        }
+
+        function openCodeExecutor() {
+            document.getElementById('codeExecutorOverlay').classList.add('active');
+        }
+
+        function closeCodeExecutor() {
+            document.getElementById('codeExecutorOverlay').classList.remove('active');
+        }
+
+        function executeCode() {
+            const code = document.getElementById('codeInput').value;
+            document.getElementById('codeOutput').textContent = 'Выполнение...';
+            webui.call('execute_code', code);
+        }
+
+        // Функция для обновления списка курсов (вызывается из C++)
+        function updateCoursesList(coursesData) {
+            try {
+                const courses = JSON.parse(coursesData);
+                const container = document.getElementById('coursesList');
+                
+                if (!courses || courses.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">Нет доступных курсов</div>';
+                    return;
+                }
+
+                let html = '';
+                courses.forEach((course, courseIndex) => {
+                    html += `<div class="course-item" data-course-index="${courseIndex}">`;
+                    html += `<div class="course-title">📘 ${course.title || 'Без названия'}</div>`;
+                    
+                    if (course.topics && course.topics.length > 0) {
+                        html += '<div class="topics-list">';
+                        course.topics.forEach((topic, topicIndex) => {
+                            const topicId = `${courseIndex}-${topicIndex}`;
+                            const topicIcon = topic.type === 'test' ? '📝' : '📖';
+                            html += `<div class="topic-item" onclick="selectTopic('${courseIndex}', '${topicIndex}')" data-topic-id="${topicId}">`;
+                            html += `${topicIcon} ${topic.title || 'Тема без названия'}`;
+                            html += '</div>';
+                        });
+                        html += '</div>';
+                    }
+                    html += '</div>';
+                });
+
+                container.innerHTML = html;
+            } catch (e) {
+                console.error('Error parsing courses data:', e);
+                document.getElementById('coursesList').innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">Ошибка загрузки курсов</div>';
+            }
+        }
+
+        // Функция для обновления содержимого темы (вызывается из C++)
+        function updateTopicContent(topicData) {
+            try {
+                const data = JSON.parse(topicData);
+                const container = document.getElementById('topicContent');
+                const titleElement = document.getElementById('topicTitle');
+                
+                if (!data || !data.blocks) {
+                    container.innerHTML = '<div class="empty-content">Нет содержимого для этой темы</div>';
+                    return;
+                }
+
+                // Обновляем заголовок
+                if (data.title) {
+                    titleElement.textContent = data.title;
+                }
+
+                // Сохраняем данные теста если есть
+                if (data.test) {
+                    currentTestData = data.test;
+                    selectedAnswers = {};
+                }
+
+                // Генерируем HTML для блоков
+                let html = '';
+                data.blocks.forEach((block, index) => {
+                    switch (block.type) {
+                        case 'text':
+                            html += `<div class="content-block text-block">${block.content}</div>`;
+                            break;
+                            
+                        case 'code':
+                            html += `<div class="content-block code-block">`;
+                            html += `<pre>${escapeHtml(block.content)}</pre>`;
+                            html += `<button class="copy-btn" onclick="copyCode('${escapeHtml(block.content).replace(/'/g, "\\'")}')">Копировать</button>`;
+                            html += `</div>`;
+                            break;
+                            
+                        case 'image':
+                            html += `<div class="content-block image-block">`;
+                            html += `<img src="${block.content}" alt="${block.caption || 'Изображение'}">`;
+                            if (block.caption) {
+                                html += `<div class="image-caption">${block.caption}</div>`;
+                            }
+                            html += `</div>`;
+                            break;
+                            
+                        case 'test':
+                            html += `<div class="content-block test-block" data-test-id="${index}">`;
+                            html += `<div class="test-question">${block.question || 'Вопрос:'}</div>`;
+                            html += `<div class="test-options">`;
+                            
+                            if (block.options && Array.isArray(block.options)) {
+                                block.options.forEach((option, optIndex) => {
+                                    const optionId = `test-${index}-opt-${optIndex}`;
+                                    const isSelected = selectedAnswers[index] === optIndex;
+                                    html += `<div class="test-option ${isSelected ? 'selected' : ''}" onclick="selectTestOption(${index}, ${optIndex})">`;
+                                    html += `<input type="radio" name="test-${index}" id="${optionId}" value="${optIndex}" ${isSelected ? 'checked' : ''}>`;
+                                    html += `<label for="${optionId}">${option}</label>`;
+                                    html += `</div>`;
+                                });
+                            }
+                            
+                            html += `</div>`;
+                            html += `<button class="submit-test" onclick="submitTest(${index})" id="submit-test-${index}">Проверить ответ</button>`;
+                            
+                            // Добавляем feedback если есть
+                            if (block.feedback) {
+                                const feedbackClass = block.feedback.isCorrect ? 'correct' : 'incorrect';
+                                html += `<div class="test-feedback ${feedbackClass}" id="test-feedback-${index}">`;
+                                html += block.feedback.message || '';
+                                html += `</div>`;
+                            }
+                            
+                            html += `</div>`;
+                            break;
+                    }
+                });
+
+                container.innerHTML = html;
+            } catch (e) {
+                console.error('Error parsing topic data:', e);
+                document.getElementById('topicContent').innerHTML = '<div class="empty-content">Ошибка загрузки содержимого</div>';
+            }
+        }
+
+        // Функция для отображения результата выполнения кода
+        function showResult(result) {
+            document.getElementById('codeOutput').textContent = result;
+        }
+
+        // Вспомогательные функции
+        function selectTopic(courseIndex, topicIndex) {
+            // Убираем активный класс у всех тем
+            document.querySelectorAll('.topic-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Добавляем активный класс выбранной теме
+            const selectedTopic = document.querySelector(`[onclick="selectTopic('${courseIndex}', '${topicIndex}')"]`);
+            if (selectedTopic) {
+                selectedTopic.classList.add('active');
+            }
+
+            // Сохраняем ID текущей темы
+            currentTopicId = `${courseIndex}-${topicIndex}`;
+
+            // Запрашиваем содержимое темы
+            webui.call('load_topic_content', JSON.stringify({
+                courseIndex: parseInt(courseIndex),
+                topicIndex: parseInt(topicIndex)
+            }));
+        }
+
+        function selectTestOption(testIndex, optionIndex) {
+            selectedAnswers[testIndex] = optionIndex;
+            
+            // Обновляем UI
+            const testBlock = document.querySelector(`[data-test-id="${testIndex}"]`);
+            if (testBlock) {
+                const options = testBlock.querySelectorAll('.test-option');
+                options.forEach((opt, idx) => {
+                    if (idx === optionIndex) {
+                        opt.classList.add('selected');
+                        opt.querySelector('input').checked = true;
+                    } else {
+                        opt.classList.remove('selected');
+                        opt.querySelector('input').checked = false;
+                    }
+                });
+            }
+        }
+
+        function submitTest(testIndex) {
+            const selectedOption = selectedAnswers[testIndex];
+            
+            if (selectedOption === undefined) {
+                alert('Пожалуйста, выберите ответ');
+                return;
+            }
+
+            // Отправляем ответ в C++
+            webui.call('submit_test_answer', JSON.stringify({
+                testIndex: testIndex,
+                selectedOption: selectedOption,
+                topicId: currentTopicId
+            }));
+        }
+
+        // Функция для отображения результата теста (вызывается из C++)
+        function showTestResult(result) {
+            try {
+                const data = JSON.parse(result);
+                const feedbackDiv = document.getElementById(`test-feedback-${data.testIndex}`);
+                
+                if (!feedbackDiv) {
+                    // Создаем feedback если его нет
+                    const testBlock = document.querySelector(`[data-test-id="${data.testIndex}"]`);
+                    if (testBlock) {
+                        const newFeedback = document.createElement('div');
+                        newFeedback.id = `test-feedback-${data.testIndex}`;
+                        newFeedback.className = `test-feedback ${data.isCorrect ? 'correct' : 'incorrect'}`;
+                        newFeedback.innerHTML = data.message || (data.isCorrect ? 'Правильно!' : 'Неправильно');
+                        testBlock.appendChild(newFeedback);
+                    }
+                } else {
+                    feedbackDiv.className = `test-feedback ${data.isCorrect ? 'correct' : 'incorrect'}`;
+                    feedbackDiv.innerHTML = data.message || (data.isCorrect ? 'Правильно!' : 'Неправильно');
+                }
+
+                // Блокируем кнопку после ответа
+                const submitBtn = document.getElementById(`submit-test-${data.testIndex}`);
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                }
+            } catch (e) {
+                console.error('Error showing test result:', e);
+            }
+        }
+
+        function copyCode(code) {
+            navigator.clipboard.writeText(code).then(() => {
+                alert('Код скопирован в буфер обмена!');
+            }).catch(() => {
+                alert('Ошибка при копировании');
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Закрытие по Escape
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeCodeExecutor();
+        });
+
+        // При загрузке страницы запрашиваем список курсов
+        document.addEventListener('DOMContentLoaded', function() {
+            webui.call('request_courses_list');
+        });
+    </script>
+</body>
+</html>

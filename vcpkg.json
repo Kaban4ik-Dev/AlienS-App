@@ -1,0 +1,13 @@
+{
+  "name": "alien-s",
+  "version-string": "1.0.0",
+  "dependencies": [
+    "vulkan",
+    "vulkan-headers",
+    "sdl2",
+    "glm",
+    "pugixml",
+    "stb"
+  ],
+  "description": "AlienS - Code Learning App"
+}
