@@ -1,6 +1,6 @@
 {
   "name": "alien-s",
-  "version-string": "1.0.0",
+  "version-string": "0.0.1",
   "dependencies": [
     "vulkan",
     "vulkan-headers",

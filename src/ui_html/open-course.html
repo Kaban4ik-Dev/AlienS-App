@@ -545,7 +545,7 @@
                         html += '<div class="topics-list">';
                         course.topics.forEach((topic, topicIndex) => {
                             const topicId = `${courseIndex}-${topicIndex}`;
-                            const topicIcon = topic.type === 'test' ? '📝' : '📖';
+                            const topicIcon = (topic.type === '1' || topic.type === 1 || topic.type === true) ? '📝' : '📖';
                             html += `<div class="topic-item" onclick="selectTopic('${courseIndex}', '${topicIndex}')" data-topic-id="${topicId}">`;
                             html += `${topicIcon} ${topic.title || 'Тема без названия'}`;
                             html += '</div>';

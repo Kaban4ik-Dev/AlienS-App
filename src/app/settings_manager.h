@@ -10,12 +10,15 @@
 
 #include <pugixml.hpp>
 
+// Класс-синглтон для управления настройками
 class SettingsManager
 {
 private:
 
+	// Тип поля настройки
 	using SettingValueType = std::variant<bool, int, float, std::string>;
 
+	// Перечисление способов валидации
 	enum ValidationType :uint8_t
 	{
 		NoValidation,		// Без валидации - bool
@@ -23,6 +26,7 @@ private:
 		HasAcceptableValues	// Есть список значений - int, float, string
 	};
 
+	// Структура настройки
 	struct Setting
 	{
 		std::string name;									// Имя настройки
@@ -52,9 +56,9 @@ public:
 	~SettingsManager() = default;
 
 	// Получить значение настройки по имени
-	SettingValueType GetSettingValue(std::string setting_name) {};
+	SettingValueType GetSettingValue(std::string setting_name);
 	// Установить значение настройки по имени
-	std::error_code& SetSettingValue(std::string setting_name, SettingValueType new_value) {};
+	std::error_code& SetSettingValue(std::string setting_name, SettingValueType new_value);
 
 	// Загрузить настройки из файла
 	std::error_code& LoadSettings(std::string* filename);
