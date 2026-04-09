@@ -1,8 +1,11 @@
-# Выходные директории сборки
+﻿# Выходные директории сборки
 out/
 build/
 bin/
 lib/
+
+# Дополнительные директории
+/ui_html/
 
 # Директории Visual Studio
 .vs/
@@ -21,10 +24,6 @@ CMakeFiles/
 cmake_install.cmake
 Makefile
 compile_commands.json
-
-# Скомпилированные шейдеры (они генерируются)
-shaders/compiled/
-*.spv
 
 # Артефакты сборки
 *.exe

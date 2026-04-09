@@ -139,11 +139,13 @@ function(ensure_directory dir_path)
     )
 endfunction()
 
-# Копируем assets
+# Копирование ассетов
 copy_folder(assets assets)
-
-# Копируем courses/example
+# Копирование курсов
 copy_folder(courses/example courses/example)
+# Копирование настроек
+copy_folder(data/config data/config)
+copy_folder(data/user data/user)
 
 # Создаём остальные папки
 ensure_directory(courses/download)

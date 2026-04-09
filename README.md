@@ -19,3 +19,5 @@ AlienSApp
     - c_cpp
     - python
     - verilog
+  - config # stores configuration files
+  - user # stores account data
