@@ -5,7 +5,7 @@ Its goal is to provide an accessible, hands-on learning experience for individua
 
 # File structure after the build
 AlienSApp
-- assets # stores all images, sprites and sounds
+- assets # stores all images, fonts and sounds
 - bin
   - aliens_app.exe
   - ... and all other build results
