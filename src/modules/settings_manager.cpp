@@ -1,6 +1,6 @@
 #include <filesystem>
 
-#include "settings_manager.h"
+#include "settings_manager.hpp"
 #include <pugixml.hpp>
 
 SettingsManager::SettingsManager()

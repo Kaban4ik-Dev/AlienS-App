@@ -1,4 +1,4 @@
-#include "course_manger.h"
+#include "course_manger.hpp"
 
 CourseManager::CourseManager()
 {
